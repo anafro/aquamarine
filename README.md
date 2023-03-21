@@ -9,19 +9,21 @@ to simplify the programmers' lives.
 
 ## What's so special about Lush?
 
-### Variable naming
+### Naming
 
-For example, let's see how to create a variables in Lush:
+For example, let's see how to create variables in Lush:
 
 ```sass
 My name: 'John'
 ```
 
-As we can see, Lush has a special naming case (which probably doesn't have a name yet lol).
-Let's call it ✨The Lush case✨. It's just how you spell words in the sentence.
+As you can see, Lush has a special naming case (which probably doesn't have a name yet lol).
+Let's call it ✨The Lush case✨. It's just how you spell words in sentences - the variable and function names consist of
+one or multiple words separated by a space. First letter is capital. For example, `User`, `A new post`, `HTML content`, `My 2nd favorite person on this planet`.
 
 ### Operators
-We also changed some operators. We think that dot looks a bit confusing for new programmers, so we changed it to an arrow `->`.
+We also changed some operators. We think that dot from C-like languages looks a bit confusing for new programmers, so we changed it to an arrow `->`.
+This operator called "Extract". It extracts the functions and properties from modules and objects.
 
 For example, to print a message to console, use this code:
 
@@ -29,23 +31,25 @@ For example, to print a message to console, use this code:
 Terminal -> Write: 'Hello world'
 ```
 
-And yes, function call and variable definition use the same operator called "Pass" `:`.
+`Terminal` here is a standard Lush module for console manipulations.
+
+And yes, function call and variable assignment use the same operator called "Pass", which looks like `:`.
 
 We changed the boolean operators too! Instead of double 'or' and 'and', use a single character like so:
 
 ```sass
-If: Age > 18 & Money > 100 | Has VIP status { ...
+If: Age > 18 & Money > 100 | Has VIP status {
+    Terminal -> Write: 'You are allowed to join the club'
+}
 ```
 
-Isn't it beautiful? Oh, and as you can notice, we don't use `=` as a assignment operator. Instead, it's an 'equals' operator!
+Isn't it beautiful? Oh, and as you can notice, we don't use `=` as an assignment operator. Instead, it's an 'equals' operator!
 
 ```sass
-If: User password = Password within database { ...
+If: User -> Password = Password inside database {
+    Auth -> Grant access to: User
+}
 ```
-
-## Wait. No keywords?
-Yes! In Lush, we don't need them. Instead, we made everything a function, which simplifies everything a lot!
-And yes again! Even `If`, `For`, `Import`, and other constructions are functions too.
 
 ## Making my own functions
 To create a function with no parameters, just write the name and the code in curly brackets:
@@ -70,6 +74,24 @@ Print multiple times: (Message: Text, Times: Int) {
 Print multiple times: 'Hello world', 3
 ```
 
+## Wait. No keywords?
+Yes! In Lush, we don't need them. Instead, we made everything a function, which simplifies everything a lot!
+And yes again! Even `If`, `For`, `Import`, and other constructions are functions too.
+
+You can create your own constructions like you would create a function. Just after all the parameters, define the `Body` parameter with type `Code`.
+There's an example of how to recreate the `Repeat` constructor, which repeats code several times.
+
+```sass
+Repeat: (Times: Int, Body: Code) {
+    Times -> Must be positive or 0!
+      
+    While: Times > 0 {
+        Times: Times - 1
+        Body -> Run!
+    }
+}
+```
+
 ## Object-oriented programming
 Lush is object-oriented programming as well as your favorite language (we hope that it's not C he-he).
 Any yes, to create a class, you need some functions too! See an example:
@@ -91,6 +113,29 @@ Class: User {
 
 John: Make user: "John", 28
 John -> Introduce!
+```
+
+### Static methods and fields
+To create static methods and fields, use some functions again!
+
+* `Class property` creates a new static field in class.
+* `Make class method` converts a method to a class method.
+
+```sass
+Class: Authentification {
+    Class property: User
+      
+    Login: (User name: Text, User password: Text, User age: Int) {
+        User age -> Must be positive!
+        
+        User: Make user: User name, User password, User age
+    }
+}
+
+Authentification -> Login: 'john1995', '$upeR_sEEcreT%pa$$w0rD123%', 23
+
+Authentification -> User -> Name        === 'john1995'
+Authentification -> User -> Age         === 23
 ```
 
 ## Arrays? We've got something more interesting!
@@ -133,3 +178,4 @@ Favorite numbers -> Add: 4
 
 Terminal -> Write: Favotire numbers   === [1, 2, 3, 4]
 ```
+
