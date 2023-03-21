@@ -28,6 +28,7 @@ public class StringCharacterEscapeState extends LexerState {
             lexer.addCosmeticProblem("You've tried to escape the string wrapper quote %c%c, but inside this string the quotation mark is different - %c, so you don't have to escape it. If your lexer mode allows, we will ignore the backslash and pretend that you meant just '%c'".formatted(
                     CHARACTER,
                     character,
+                    stringLiteralState.getWrapperCharacter(),
                     character
             ));
         }
