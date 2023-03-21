@@ -4,7 +4,7 @@ import ru.anafro.lush.lang.lexer.common.Lexer;
 import ru.anafro.lush.lang.lexer.common.tokens.StringLiteralToken;
 
 public class StringLiteralState extends LexerState {
-    private char wrapperCharacter;
+    private final char wrapperCharacter;
 
     public StringLiteralState(Lexer lexer, char wrapperCharacter) {
         super(lexer, false);
@@ -14,6 +14,7 @@ public class StringLiteralState extends LexerState {
     @Override
     public void handleNextCharacter(char character) {
         if(StringLiteralToken.isWrapper(character)) {
+            lexer.addToken(new StringLiteralToken(lexer.getBufferContent()));
             lexer.switchStateDroppingCurrentCharacter(new TokenGuessState(lexer));
         }
 
