@@ -21,6 +21,12 @@ public class NumericState extends LexerState {
         }
 
         if(!isCharCorrect(character)) {
+            if (IdState.isCharCorrect(character)) {
+                lexer.addError("We found a letter right after the integer. It's probably just a typo, so please remove that symbol '%c'.".formatted(
+                        character
+                ));
+            }
+
             lexer.addToken(new IntegerLiteralToken(lexer.getBufferContent()));
             lexer.switchStateKeepingCurrentCharacter(new TokenGuessState(lexer));
             return;
