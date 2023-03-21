@@ -24,7 +24,7 @@ public class LexCommand extends Command {
     private static final int DELAY_BETWEEN_LEXER_VISUALIZER_PRINTS_MILLISECONDS = 0;
 
     public LexCommand() {
-        super("lex", "Performs the lexing of a .lush-file", List.of(new CommandParameter("file", "The file that should be lexed.", true)), List.of(new CommandFlag("forgiving", "Turns on the forgiving mode. " + LexerMode.FORGIVING.getDescription())));
+        super("lex", "Performs the lexing of a .lush-file", List.of(new CommandParameter("file", "The file that should be lexed.", true)), List.of(new CommandFlag("forgiving", "Turns on the forgiving mode. " + LexerMode.FORGIVING.getDescription()), new CommandFlag("visualize", "Shows the process of lexing. Useful in lexer debugging")));
     }
 
     @Override
@@ -41,10 +41,14 @@ public class LexCommand extends Command {
         logger.info("Running the lexer in %s mode. %s".formatted(lexer.getMode().toString().toLowerCase(), lexer.getMode().getDescription()));
         Console.breakLine();
 
-        lexer.addEventListener(new LexerConsoleVisualizerEventListener(lexer));
+        if(flags.contains("visualize")) {
+            lexer.addEventListener(new LexerConsoleVisualizerEventListener(lexer));
+        }
+
+        lexer.lex();
 
         printCode(lexer);
-        printTokens(lexer.lex());
+        printTokens(lexer.getTokens());
     }
 
     private void printCode(Lexer lexer) {
