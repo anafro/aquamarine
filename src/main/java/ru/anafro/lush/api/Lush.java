@@ -1,8 +1,11 @@
 package ru.anafro.lush.api;
 
 import ru.anafro.lush.cli.*;
+import ru.anafro.lush.lang.lexer.common.Lexer;
+import ru.anafro.lush.lang.lexer.common.LexerMode;
 import ru.anafro.lush.logger.ConsoleLogger;
 import ru.anafro.lush.logger.Logger;
+import ru.anafro.lush.utils.console.Console;
 import ru.anafro.lush.utils.console.ConsoleColors;
 import ru.anafro.lush.utils.exceptions.DefaultExceptionHandler;
 import ru.anafro.lush.utils.release.Version;
@@ -32,8 +35,8 @@ public class Lush {
             var arguments = parser.getArguments();
             var flags = parser.getFlags();
 
-            System.out.println(getLogo());
-            System.out.println(getInfo());
+            Console.println(getLogo());
+            Console.println(getInfo());
 
             commands.run(commandName, arguments, flags);
         } catch(CommandException | CommandArgsParsingException exception) {
