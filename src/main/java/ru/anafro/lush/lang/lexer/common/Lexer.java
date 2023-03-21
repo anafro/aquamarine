@@ -19,7 +19,7 @@ import ru.anafro.lush.utils.strings.TextBuffer;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class Lexer {
+public class Lexer implements Iterator<Token> {
     private final LexerMode mode;
     private final Code code;
     private LexerState state;
@@ -31,6 +31,7 @@ public class Lexer {
     private final ArrayList<LexerProblem> problems = new ArrayList<>();
     private final ArrayList<LexerEventListener> listeners = new ArrayList<>();
     private final Logger logger = new ConsoleLogger();
+    private boolean statePushedNewToken = false;
 
     public Lexer(String code, LexerMode mode) {
         this.code = new Code(prepareCode(code), true);
@@ -42,11 +43,30 @@ public class Lexer {
         this(code, LexerMode.STRICT);
     }
 
-    public ArrayList<Token> lex() {
+
+    public void lex() {
         resetCharacterIndex();
         clearProblems();
 
-        while(currentCharacterIndex < code.length()) {
+        while(hasNext()) {
+            next();
+        }
+
+        state.afterCodeLexing();
+        addToken(new CodeEndsToken());
+
+        forEachEventListener(LexerEventListener::onLexingCompletedEvent);
+        printProblems();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return currentCharacterIndex < code.length() || (!tokens.isEmpty() && lastToken().getName().equals("Code ends"));
+    }
+
+    @Override
+    public Token next() {
+        while(hasNext()) {
             char currentCharacter = code.charAt(currentCharacterIndex);
 
             if(isCharEmpty(currentCharacter) && state.wantsEmptyCharsToBeIgnored()) {
@@ -58,15 +78,18 @@ public class Lexer {
             forEachEventListener(LexerEventListener::onHandlingCharacterEvent);
             state.handleNextCharacter(currentCharacter);
             moveToNextCharacter();
+
+            if(statePushedNewToken) {
+                break;
+            }
         }
 
-        state.afterCodeLexing();
-        addToken(new CodeEndsToken());
+        statePushedNewToken = false;
+        return lastToken();
+    }
 
-        forEachEventListener(LexerEventListener::onLexingCompletedEvent);
-        printProblems();
-
-        return tokens;
+    protected Token lastToken() {
+        return tokens.get(tokens.size() - 1);
     }
 
     public void addProblem(LexerProblem problem) {
@@ -158,6 +181,8 @@ public class Lexer {
     public void addToken(Token token) {
         forEachEventListener(handler -> handler.onAddingTokenEvent(token));
         tokens.add(token);
+
+        statePushedNewToken = true;
     }
 
     public void moveToNextCharacter() {
