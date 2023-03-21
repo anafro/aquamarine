@@ -11,8 +11,8 @@ public class SpecialChars {
         put("\r", "\\r");
         put("\f", "\\f");
         put("\\", "\\\\");
-        put("'", "'");
-        put("\"", "\"");
+        put("'", "\\'");
+        put("\"", "\\\"");
     }};
 
     private static final Map<String, String> UNICODE = new HashMap<>() {{
@@ -22,8 +22,8 @@ public class SpecialChars {
         put("\r", "⇐");
         put("\f", "ƒ");
         put("\\", "\\");
-        put("\\", "\\");
-        put("\\", "\\");
+        put("'", "'");
+        put("\"", "\"");
     }};
 
     private SpecialChars() {
